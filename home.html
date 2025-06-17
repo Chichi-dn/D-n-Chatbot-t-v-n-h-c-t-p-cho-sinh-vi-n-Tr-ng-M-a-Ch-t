@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chatbot HUMG</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">🎓 Chatbot sinh viên HUMG</div>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Nhập câu hỏi tại đây..." />
+      <button onclick="sendMessage()">Gửi</button>
+    </div>
+  </div>
+  <style>
+  /* NỀN TRANG: Logo  phủ toàn bộ, có lớp phủ mờ */
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Logo_Truong_Dai_hoc_Mo_-_Dia_chat.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(255, 255, 255, 0.75); /* lớp phủ mờ */
+  z-index: -1;
+}
+
+/* KHUNG CHAT */
+.chat-container {
+  width: 500px;
+  max-width: 95%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.chat-header {
+  background: #014c8a;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* KHUNG NỘI DUNG CHAT */
+.chat-box {
+  flex: 1;
+  height: 400px; /* hoặc chiều cao tùy ý */
+  padding: 1rem;
+  overflow-y: auto; /* 💡 Quan trọng để cuộn được */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f9f9f9;
+  border-top: 1px solid #ccc;
+  scroll-behavior: smooth; /* 👌 mượt */
+}
+
+/* Tùy chọn làm đẹp thanh cuộn */
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-container {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* INPUT */
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background: #fff;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  padding: 10px 16px;
+  background: #004080;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.chat-input button:hover {
+  background: #0055aa;
+}
+
+/* TIN NHẮN */
+.message {
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 80%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.user-message {
+  align-self: flex-end;
+  background: #d1fffd;
+  border: 1px solid #aad4ff;
+}
+
+.bot-message {
+  align-self: flex-start;
+  background: #ffc0c0;
+  border: 1px solid #ccc;
+}
+
+/* Cuộn mượt */
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+</style>
+<script>
+  function sendMessage() {
+    var rawText = $("#user-input").val();
+    if (!rawText.trim()) return;
+
+    var userHtml = '<div class="message user-message">' + rawText + '</div>';
+    $("#chat-box").append(userHtml);
+    $("#user-input").val("");
+
+    // Cuộn xuống dưới
+    $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+
+    $.get("/get", { msg: rawText }).done(function(data) {
+      var botHtml = '<div class="message bot-message">' + data + '</div>';
+      $("#chat-box").append(botHtml);
+      $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+    });
+  }
+
+  $("#user-input").keypress(function(e) {
+    if (e.which == 13) {
+      sendMessage();
+    }
+  });
+</script>
+
+      </body>
+</html>
